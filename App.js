@@ -2,13 +2,15 @@ import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
 import { Button } from "@rneui/themed";
 import { initializeApp } from "firebase/app";
+import Login from "./modules/auth/adapters/components/Login";
+import React from "react";
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <Text>Hola David Martinez</Text>
+      <Login />
       <Button
-        title="Basic Button"
+        title="Maniac Button"
         buttonStyle={{
           backgroundColor: "rgba(78, 116, 289, 1)",
           borderRadius: 3,

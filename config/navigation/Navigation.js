@@ -14,8 +14,9 @@ export default function Navigation() {
         initialRouteName="profile" // Muestra por defecto el componente Profile
         screenOptions={({ route }) => ({ // Opciones de los tabs (iconos, colores, etc)
           tabBarIcon: ({ color }) => screenOptions(route, color),
-          tabBarActiveTintColor: "tomato",
+          tabBarActiveTintColor: "#BF0AFF",
           tabBarInactiveTintColor: "gray",
+          headerShown: false,
         })}
       >
         <Tab.Screen

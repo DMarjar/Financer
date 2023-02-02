@@ -2,7 +2,8 @@ import { StyleSheet, Text, View, ScrollView } from "react-native";
 import React from "react";
 import { Image, Button } from "@rneui/base";
 
-export default function UserGuest() {
+export default function UserGuest(props) {
+    const { navigation } = props;
   return (
     <View style={styles.container}>
       <ScrollView style={styles.mx} centerContent={true}>
@@ -41,7 +42,7 @@ export default function UserGuest() {
                 }}
                 buttonStyle={styles.btnLogin}
                 containerStyle={styles.btnContainer}
-                onPress={() => console.log("Log in")}
+                onPress={() => navigation.navigate("profileStack")}
                 radius={10}
             />
         </View>
@@ -82,7 +83,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     btnContainer: {
-        width: "100%",
+        width: "70%",
         marginBottom: 16,
     },
     btnSign:{

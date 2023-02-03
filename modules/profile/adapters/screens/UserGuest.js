@@ -29,7 +29,7 @@ export default function UserGuest(props) {
                 }}
                 buttonStyle={styles.btnSign}
                 containerStyle={styles.btnContainer}
-                onPress={() => console.log("Sign Up")}
+                onPress={() => navigation.navigate("profileStack")}
                 radius={10}
             />
             <Button
@@ -42,7 +42,7 @@ export default function UserGuest(props) {
                 }}
                 buttonStyle={styles.btnLogin}
                 containerStyle={styles.btnContainer}
-                onPress={() => navigation.navigate("profileStack")}
+                onPress={() => navigation.navigate("loginStack")}
                 radius={10}
             />
         </View>

@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View, ScrollView } from "react-native";
 import React from "react";
-import { Image, Button } from "@rneui/base";
+import { Image, Button, color } from "@rneui/base";
 
 export default function UserGuest(props) {
     const { navigation } = props;
@@ -47,7 +47,9 @@ export default function UserGuest(props) {
             />
         </View>
       </ScrollView>
-      <Text>UserGuest</Text>
+      <View>
+        <Text>Copyright Financer 2023</Text>
+      </View>
     </View>
   );
 }

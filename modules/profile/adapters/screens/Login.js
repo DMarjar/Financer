@@ -2,16 +2,35 @@ import { StyleSheet, Text, View, ScrollView } from "react-native";
 import React, { useState } from "react"; // useState
 import { Input, Button, Image, Icon } from "@rneui/base";
 import { isEmpty } from "lodash";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import Loading from "../../../../kernel/components/Loading";
 
 export default function Login() {
   const [error, setError] = useState(""); // useState sirve para manejar el estado de un componente
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const auth = getAuth();
+  
   const login = () => {
-    if (!(isEmpty(email) || isEmpty(password))) {
-      console.log("Login");
+    if (!(isEmpty(email) && isEmpty(password))) {
+      setLoading(true);
+      signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          // Signed in
+          const user = userCredential.user;
+          setLoading(false);
+          // ...
+        })
+        .catch((error) => {
+          setLoading(false);
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          console.log(errorCode, errorMessage);
+        });
     } else {
-      setError("Campo obligatorio");
+      setError("Required field");
     }
   };
 
@@ -26,25 +45,52 @@ export default function Login() {
         <Input
           placeholder="Email"
           keyboardType="email-address"
+          autoCapitalize="none" // No capitaliza la primera letra
           containerStyle={styles.input}
           onChange={(event) => setEmail(event.nativeEvent.text)} // nativeEvent es la interacción del usuario con el input
           errorMessage={error}
         />
-        <View style={styles.bntView}>
-          <Button
-            title="Log in"
-            icon={{
-              name: "login",
-              type: "material-community",
-              size: 20,
-              color: "white",
-            }}
-            buttonStyle={styles.btnLogin}
-            containerStyle={styles.btnContainer}
-            onPress={login}
-          />
-        </View>
+        <Input
+          placeholder="Password"
+          keyboardType="password"
+          autoCapitalize="none"
+          secureTextEntry={showPassword}
+          rightIcon={
+            <Icon
+              type="material-community"
+              name={showPassword ? "eye-off-outline" : "eye-outline"} // Si showPassword es true, muestra el icono de ojo abierto, si es false, muestra el icono de ojo cerrado
+              iconStyle={{ color: "#FF0079" }}
+              onPress={() => setShowPassword(!showPassword)} // Si showPassword es true, lo cambia a false, si es false, lo cambia a true
+            />
+          }
+          containerStyle={styles.input}
+          onChange={(event) => setPassword(event.nativeEvent.text)}
+          errorMessage={error}
+        />
+        <Button
+          title="Log in"
+          icon={{
+            name: "login",
+            type: "material-community",
+            size: 20,
+            color: "white",
+          }}
+          buttonStyle={styles.btnLogin}
+          containerStyle={styles.btnContainer}
+          onPress={login}
+        />
+        <Text
+          style={styles.createAccount}
+          // TODO: Crear la pantalla de registro
+          onPress={() => console.log("Create account")}
+        >
+          Don't have an account?{" "}
+        </Text>
+        <Loading show={loading} text="Logging in..." />
       </ScrollView>
+      <View>
+        <Text>Copyright Financer 2023</Text>
+      </View>
     </View>
   );
 }
@@ -61,19 +107,23 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   input: {
+    width: "100%",
     marginBottom: 10,
   },
-  bntView: {
-    flex: 1,
-    alignItems: "center",
-  },
   btnContainer: {
-    width: "70%",
+    width: "50%",
     marginBottom: 16,
+    alignContent: "center",
+    alignSelf: "center",
   },
   btnLogin: {
-    backgroundColor: "#BF0AFF",
+    backgroundColor: "#FF0079",
     borderRadius: 10,
-    width: "50%",
+    width: "100%",
+  },
+  createAccount: {
+    alignSelf: "center",
+    marginTop: 8,
+    color: "#FF0079",
   },
 });

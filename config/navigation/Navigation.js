@@ -35,6 +35,7 @@ export default function Navigation() {
   );
 }
 
+// Switch para mostrar el icono correspondiente en cada tab
 const screenOptions = (route, color) => {
   let iconName;
   switch (route.name) {

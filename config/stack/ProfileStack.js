@@ -3,13 +3,14 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Profile from "../../modules/profile/adapters/screens/Profile";
 import UserGuest from "../../modules/profile/adapters/screens/UserGuest";
 import Login from "../../modules/profile/adapters/screens/Login";
+import CreateUser from "../../modules/user/CreateUser";
 
 const Stack = createNativeStackNavigator();
 
 export default function ProfileStack() {
   return (
     <Stack.Navigator
-      initialRouteName="userGuestStack" // Pantalla inicial
+      initialRouteName="createUserStack" // Pantalla inicial
       screenOptions={{
         headerMode: "screen", // Muestra el header en cada pantalla
         headerTintColor: "white", // Color del texto del header
@@ -30,6 +31,11 @@ export default function ProfileStack() {
         name="loginStack"
         options={{ title: "Login" }}
         component={Login}
+      />
+      <Stack.Screen
+        name="createUserStack"
+        options={{ title: "Create an account" }}
+        component={CreateUser}
       />
     </Stack.Navigator>
   );

@@ -66,7 +66,7 @@ export default function Login(props) {
             <Icon
               type="material-community"
               name={showPassword ? "eye-off-outline" : "eye-outline"} // Si showPassword es true, muestra el icono de ojo abierto, si es false, muestra el icono de ojo cerrado
-              iconStyle={{ color: "#FF0079" }}
+              iconStyle={showPassword ? { color: "#FF0079" } : { color: "#c2c2c2" }} // Si showPassword es true, muestra el icono de ojo cerrado en color gris, si es false, muestra el icono de ojo abierto en color rojo
               onPress={() => setShowPassword(!showPassword)} // Si showPassword es true, lo cambia a false, si es false, lo cambia a true
             />
           }

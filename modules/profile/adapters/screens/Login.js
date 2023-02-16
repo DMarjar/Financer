@@ -5,32 +5,39 @@ import { isEmpty } from "lodash";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import Loading from "../../../../kernel/components/Loading";
 
-export default function Login() {
-  const [error, setError] = useState(""); // useState sirve para manejar el estado de un componente
+export default function Login(props) {
+  const { navigation } = props;
+  const [error, setError] = useState({ email: "", password: "" }); // useState sirve para manejar el estado de un componente
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(true);
   const [loading, setLoading] = useState(false);
   const auth = getAuth();
-  
+
   const login = () => {
     if (!(isEmpty(email) && isEmpty(password))) {
       setLoading(true);
+      setError({ email: "", password: "" });
       signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
           // Signed in
           const user = userCredential.user;
           setLoading(false);
+          navigation.navigate("userGuestStack");
           // ...
         })
         .catch((error) => {
+          setError({ email: "Email is required", password: "Email or password are incorrect" });
           setLoading(false);
           const errorCode = error.code;
           const errorMessage = error.message;
           console.log(errorCode, errorMessage);
         });
     } else {
-      setError("Required field");
+      setError({
+        email: "Email is required",
+        password: "Password is required",
+      });
     }
   };
 
@@ -48,7 +55,7 @@ export default function Login() {
           autoCapitalize="none" // No capitaliza la primera letra
           containerStyle={styles.input}
           onChange={(event) => setEmail(event.nativeEvent.text)} // nativeEvent es la interacción del usuario con el input
-          errorMessage={error}
+          errorMessage={error.email}
         />
         <Input
           placeholder="Password"
@@ -65,7 +72,7 @@ export default function Login() {
           }
           containerStyle={styles.input}
           onChange={(event) => setPassword(event.nativeEvent.text)}
-          errorMessage={error}
+          errorMessage={error.password}
         />
         <Button
           title="Log in"

@@ -5,6 +5,8 @@ import { Image, Input, Button, Icon } from "@rneui/base";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { isEmpty, size } from "lodash";
 import Loading from "../../kernel/components/Loading";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { validateEmail } from "./../../kernel/validations/ValidateEmail";
 
 const payload = {
   email: "",
@@ -16,15 +18,57 @@ const changePayload = (e, type) => {
   setFormData({ ...data, [type]: e.nativeEvent.text }); // ... sirve para asignar el valor de un objeto a otro
 };
 
-const createUser = () => {
-  console.log("data ", formData);
-};
-
+const auth = getAuth();
 const [loading, setLoading] = useState(false);
 const [error, setError] = useState(payload);
 const [formData, setFormData] = useState(payload);
 const [showPassword, setShowPassword] = useState(true);
 const [showRepeatPassword, setShowRepeatPassword] = useState(true);
+
+const createUser = () => {
+  if (!(isEmpty(data.email) || isEmpty(data.password))) {
+    if (validateEmail(data.email)) {
+      if (size(data.password) >= 6) {
+        if (data.password === data.repeatPassword) {
+          setLoading(true);
+          createUserWithEmailAndPassword(auth, data.email, data.password)
+            .then((response) => {
+              setLoading(false);
+              console.log(response);
+            })
+            .catch((error) => {
+              setLoading(false);
+              console.log(error);
+            });
+        } else {
+          setError({
+            email: "",
+            password: "",
+            repeatPassword: "Passwords do not match",
+          });
+        }
+      } else {
+        setError({
+          email: "",
+          password: "Password must be at least 6 characters",
+          repeatPassword: "",
+        });
+      }
+    } else {
+      setError({
+        email: "Email is not valid",
+        password: "",
+        repeatPassword: "",
+      });
+    }
+  } else {
+    setError({
+      email: "Email is required",
+      password: "Password is required",
+      repeatPassword: "Repeat the password",
+    });
+  }
+};
 
 export default function CreateUser() {
   return (
@@ -113,10 +157,10 @@ const styles = StyleSheet.create({
   },
   input: {
     width: "100%",
-    marginVertical: 20,
+    marginVertical: 10,
   },
   btnContainer: {
-    marginVertical: 20,
+    marginBottom: 20,
     width: "95%",
   },
   btn: {

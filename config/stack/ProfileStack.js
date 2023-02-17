@@ -4,6 +4,7 @@ import Profile from "../../modules/profile/adapters/screens/Profile";
 import UserGuest from "../../modules/profile/adapters/screens/UserGuest";
 import Login from "../../modules/profile/adapters/screens/Login";
 import CreateUser from "../../modules/user/CreateUser";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
 const Stack = createNativeStackNavigator();
 

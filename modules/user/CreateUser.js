@@ -15,13 +15,13 @@ const payload = {
 };
 
 const changePayload = (e, type) => {
-  setFormData({ ...data, [type]: e.nativeEvent.text }); // ... sirve para asignar el valor de un objeto a otro
+  setData({ ...data, [type]: e.nativeEvent.text }); // ... sirve para asignar el valor de un objeto a otro
 };
 
 const auth = getAuth();
 const [loading, setLoading] = useState(false);
 const [error, setError] = useState(payload);
-const [formData, setFormData] = useState(payload);
+const [data, setData] = useState(payload);
 const [showPassword, setShowPassword] = useState(true);
 const [showRepeatPassword, setShowRepeatPassword] = useState(true);
 
@@ -34,7 +34,8 @@ const createUser = () => {
           createUserWithEmailAndPassword(auth, data.email, data.password)
             .then((response) => {
               setLoading(false);
-              console.log(response);
+              // Send the user to the login screen
+              navigation.navigate("login");
             })
             .catch((error) => {
               setLoading(false);
@@ -135,7 +136,7 @@ export default function CreateUser() {
           />
         </View>
       </View>
-      <Loading show={loading} text="Creating account" />
+      <Loading show={loading} text="Creating account..." />
     </KeyboardAwareScrollView>
   );
 }

@@ -6,6 +6,7 @@ import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import Loading from "../../../../kernel/components/Loading";
 
 export default function Login(props) {
+  
   const { navigation } = props;
   const [error, setError] = useState({ email: "", password: "" }); // useState sirve para manejar el estado de un componente
   const [email, setEmail] = useState("");
@@ -15,7 +16,7 @@ export default function Login(props) {
   const auth = getAuth();
 
   const login = () => {
-    if (!(isEmpty(email) && isEmpty(password))) {
+    if (!(isEmpty(data.email) || isEmpty(data.password))) {
       setLoading(true);
       setError({ email: "", password: "" });
       signInWithEmailAndPassword(auth, email, password)
@@ -23,11 +24,14 @@ export default function Login(props) {
           // Signed in
           const user = userCredential.user;
           setLoading(false);
-          navigation.navigate("userGuestStack");
-          // ...
+          // Send the user to the profile screen with the user data
+          navigation.navigate("profile", { user });
         })
         .catch((error) => {
-          setError({ email: "Email is required", password: "Email or password are incorrect" });
+          setError({
+            email: "Email is required",
+            password: "Email or password are incorrect",
+          });
           setLoading(false);
           const errorCode = error.code;
           const errorMessage = error.message;
@@ -66,7 +70,9 @@ export default function Login(props) {
             <Icon
               type="material-community"
               name={showPassword ? "eye-off-outline" : "eye-outline"} // Si showPassword es true, muestra el icono de ojo abierto, si es false, muestra el icono de ojo cerrado
-              iconStyle={showPassword ? { color: "#FF0079" } : { color: "#c2c2c2" }} // Si showPassword es true, muestra el icono de ojo cerrado en color gris, si es false, muestra el icono de ojo abierto en color rojo
+              iconStyle={
+                showPassword ? { color: "#FF0079" } : { color: "#c2c2c2" }
+              } // Si showPassword es true, muestra el icono de ojo cerrado en color gris, si es false, muestra el icono de ojo abierto en color rojo
               onPress={() => setShowPassword(!showPassword)} // Si showPassword es true, lo cambia a false, si es false, lo cambia a true
             />
           }
@@ -88,8 +94,8 @@ export default function Login(props) {
         />
         <Text
           style={styles.createAccount}
-          // TODO: Crear la pantalla de registro
-          onPress={() => console.log("Create account")}
+          // Sends the user to the create account screen
+          onPress={() => navigation.navigate("createUserStack")}
         >
           Don't have an account?{" "}
         </Text>

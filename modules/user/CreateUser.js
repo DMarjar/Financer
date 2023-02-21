@@ -7,71 +7,81 @@ import { isEmpty, size } from "lodash";
 import Loading from "../../kernel/components/Loading";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { validateEmail } from "./../../kernel/validations/ValidateEmail";
+import { app } from "./../../config/utils/Firebase";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const payload = {
-  email: "",
-  password: "",
-  repeatPassword: "",
-};
+export default function CreateUser(props) {
 
-const changePayload = (e, type) => {
-  setData({ ...data, [type]: e.nativeEvent.text }); // ... sirve para asignar el valor de un objeto a otro
-};
+  const payload = {
+    email: "",
+    password: "",
+    repeatPassword: "",
+  };
 
-const auth = getAuth();
-const [loading, setLoading] = useState(false);
-const [error, setError] = useState(payload);
-const [data, setData] = useState(payload);
-const [showPassword, setShowPassword] = useState(true);
-const [showRepeatPassword, setShowRepeatPassword] = useState(true);
+  const auth = getAuth(app);
+  const { navigation } = props;
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(payload);
+  const [data, setData] = useState(payload);
+  const [showPassword, setShowPassword] = useState(true);
+  const [showRepeatPassword, setShowRepeatPassword] = useState(true);
 
-const createUser = () => {
-  if (!(isEmpty(data.email) || isEmpty(data.password))) {
-    if (validateEmail(data.email)) {
-      if (size(data.password) >= 6) {
-        if (data.password === data.repeatPassword) {
-          setLoading(true);
-          createUserWithEmailAndPassword(auth, data.email, data.password)
-            .then((response) => {
-              setLoading(false);
-              // Send the user to the login screen
-              navigation.navigate("login");
-            })
-            .catch((error) => {
-              setLoading(false);
-              console.log(error);
+  const changePayload = (e, type) => {
+    setData({ ...data, [type]: e.nativeEvent.text }); // ... sirve para asignar el valor de un objeto a otro
+  };
+
+  const createUser = () => {
+    if (!(isEmpty(data.email) || isEmpty(data.password))) {
+      if (validateEmail(data.email)) {
+        if (size(data.password) >= 6) {
+          if (data.password === data.repeatPassword) {
+            setLoading(true);
+            createUserWithEmailAndPassword(auth, data.email, data.password)
+              .then(async (response) => {
+                try {
+                  await AsyncStorage.setItem("@session", JSON.stringify(user));
+                } catch (e) {
+                  console.log(e);
+                }
+                setLoading(false);
+                // Send the user to the login screen
+                navigation.navigate("loginStack");
+              })
+              .catch((error) => {
+                setLoading(false);
+                console.log(error);
+                // Send the user to the login screen
+                navigation.navigate("loginStack");
+              });
+          } else {
+            setError({
+              email: "",
+              password: "",
+              repeatPassword: "Passwords do not match",
             });
+          }
         } else {
           setError({
             email: "",
-            password: "",
-            repeatPassword: "Passwords do not match",
+            password: "Password must be at least 6 characters",
+            repeatPassword: "",
           });
         }
       } else {
         setError({
-          email: "",
-          password: "Password must be at least 6 characters",
+          email: "Email is not valid",
+          password: "",
           repeatPassword: "",
         });
       }
     } else {
       setError({
-        email: "Email is not valid",
-        password: "",
-        repeatPassword: "",
+        email: "Email is required",
+        password: "Password is required",
+        repeatPassword: "Repeat the password",
       });
     }
-  } else {
-    setError({
-      email: "Email is required",
-      password: "Password is required",
-      repeatPassword: "Repeat the password",
-    });
-  }
-};
-
-export default function CreateUser() {
+  };
   return (
     <KeyboardAwareScrollView>
       <Image
@@ -86,9 +96,16 @@ export default function CreateUser() {
             containerStyle={styles.input}
             keyboardType="email-address"
             autoCapitalize="none"
-            onChange={(e) => changePayload(e, "email")} // e is the event, "email" is the key
+            onChange={(event) => changePayload(event, "email")} // e is the event, "email" is the key
             errorMessage={error.email}
-            rightIcon={<Icon type="material-community" name="at" size={22} />}
+            rightIcon={
+              <Icon
+                type="material-community"
+                name="at"
+                size={22}
+                color="#5F1AFF"
+              />
+            }
           />
           <Input
             placeholder="Password"
@@ -96,14 +113,14 @@ export default function CreateUser() {
             autoCapitalize="none"
             secureTextEntry={showPassword}
             containerStyle={styles.input}
-            onChange={(event) => changePayload(e, "password")}
+            onChange={(event) => changePayload(event, "password")}
             errorMessage={error.password}
             rightIcon={
               <Icon
                 type="material-community"
                 name={showPassword ? "eye-off-outline" : "eye-outline"} // Si showPassword es true, muestra el icono de ojo abierto, si es false, muestra el icono de ojo cerrado
                 iconStyle={
-                  showPassword ? { color: "#5F1AFF" } : { color: "#c2c2c2" }
+                  showPassword ? { color: "#c2c2c2" } : { color: "#5F1AFF" }
                 } // Si showPassword es true, muestra el icono de ojo cerrado en color gris, si es false, muestra el icono de ojo abierto en color rojo
                 onPress={() => setShowPassword(!showPassword)} // Si showPassword es true, lo cambia a false, si es false, lo cambia a true
               />
@@ -115,14 +132,14 @@ export default function CreateUser() {
             autoCapitalize="none"
             secureTextEntry={showRepeatPassword}
             containerStyle={styles.input}
-            onChange={(event) => changePayload(e, "repeatPassword")}
+            onChange={(event) => changePayload(event, "repeatPassword")}
             errorMessage={error.repeatPassword}
             rightIcon={
               <Icon
                 type="material-community"
                 name={showRepeatPassword ? "eye-off-outline" : "eye-outline"}
                 iconStyle={
-                  showPassword ? { color: "#5F1AFF" } : { color: "#c2c2c2" }
+                  showRepeatPassword ? { color: "#c2c2c2" } : { color: "#5F1AFF" }
                 }
                 onPress={() => setShowRepeatPassword(!showRepeatPassword)}
               />
@@ -133,6 +150,7 @@ export default function CreateUser() {
             containerStyle={styles.btnContainer}
             buttonStyle={styles.btn}
             onPress={createUser}
+            radius={10}
           />
         </View>
       </View>

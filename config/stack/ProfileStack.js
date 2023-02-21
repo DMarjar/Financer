@@ -2,16 +2,15 @@ import React, { Component } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Profile from "../../modules/profile/adapters/screens/Profile";
 import UserGuest from "../../modules/profile/adapters/screens/UserGuest";
-import Login from "../../modules/profile/adapters/screens/Login";
+import Login from "../../modules/auth/adapters/components/Login";
 import CreateUser from "../../modules/user/CreateUser";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
 const Stack = createNativeStackNavigator();
 
 export default function ProfileStack() {
   return (
     <Stack.Navigator
-      initialRouteName="createUserStack" // Pantalla inicial
+      initialRouteName="userGuestStack" // Pantalla inicial
       screenOptions={{
         headerMode: "screen", // Muestra el header en cada pantalla
         headerTintColor: "white", // Color del texto del header

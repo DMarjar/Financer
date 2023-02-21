@@ -29,7 +29,7 @@ export default function UserGuest(props) {
                 }}
                 buttonStyle={styles.btnSign}
                 containerStyle={styles.btnContainer}
-                onPress={() => navigation.navigate("profileStack")}
+                onPress={() => navigation.navigate("createUserStack")}
                 radius={10}
             />
             <Button

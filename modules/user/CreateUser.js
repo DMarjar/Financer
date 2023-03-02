@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, Alert } from "react-native";
 import React from "react";
 import { useState } from "react";
 import { Image, Input, Button, Icon } from "@rneui/base";
@@ -42,6 +42,7 @@ export default function CreateUser(props) {
                   await AsyncStorage.setItem("@session", JSON.stringify(user));
                 } catch (e) {
                   console.log(e);
+                  Alert.alert("Error", "User is already registered");
                 }
                 setLoading(false);
                 // Send the user to the login screen
@@ -50,8 +51,9 @@ export default function CreateUser(props) {
               .catch((error) => {
                 setLoading(false);
                 console.log(error);
-                // Send the user to the login screen
-                navigation.navigate("loginStack");
+                // Send the user to the home screen
+                Alert.alert("Error", "User is already registered");
+                navigation.navigate("userGuestStack");
               });
           } else {
             setError({

@@ -1,13 +1,79 @@
-import { StyleSheet, Text, View, ScrollView } from "react-native";
-import React, { useState } from "react"; // useState
-import { Input, Button, Image, Icon } from "@rneui/base";
-import { isEmpty } from "lodash";
-import Loading from "../../../../kernel/components/Loading";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { app } from "../../../../config/utils/Firebase";
+Help me with my React Native project, let me give you some context:
 
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+My ProfileStack:
+const Stack = createNativeStackNavigator();
 
+export default function ProfileStack() {
+  return (
+    <Stack.Navigator
+      initialRouteName="profileStack" // Pantalla inicial
+      screenOptions={{
+        headerMode: "screen", // Muestra el header en cada pantalla
+        headerTintColor: "white", // Color del texto del header
+        headerStyle: { backgroundColor: "#BF0AFF" }, // Color del header
+      }}
+    >
+      <Stack.Screen
+        name="profileStack" // Nombre de la pantalla
+        options={{ title: "Profile" }} // Titulo que se muestra en el header
+        component={Profile} // Componente que se renderiza
+      />
+      <Stack.Screen
+        name="userGuestStack"
+        options={{ title: "Welcome" }}
+        component={UserGuest}
+      />
+      <Stack.Screen
+        name="loginStack"
+        options={{ title: "Login" }}
+        component={Login}
+      />
+      <Stack.Screen
+        name="createUserStack"
+        options={{ title: "Create an account" }}
+        component={CreateUser}
+      />
+    </Stack.Navigator>
+  );
+}
+
+My Profile.js:
+import { StyleSheet } from "react-native";
+import React, {useState, useEffect} from "react";
+import { reload } from "firebase/auth";
+import UserLogged from "../../../user/UserLogged";
+import UserGuest from "./UserGuest";
+import { useNavigation } from "@react-navigation/native";
+
+export default function Profile() {
+  const navigation = useNavigation();
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    async () => {
+      try {
+        const value = await AsyncStorage.getItem("@session");
+        if (value !== null) {
+          setUser(true);
+        } else {
+          setUser(false);
+        }
+      } catch {
+        console.log("Error");
+      }
+    };
+  }, [reload]);
+
+  if (user === null) {
+    return user ? <UserLogged /> : <UserGuest navigation={navigation} />;
+  }
+}
+
+const styles = StyleSheet.create({});
+
+Now the thing: I want it so when I press the login button, it logs in with Firebase and then sends the user to the Profile.js, so it can detect if the user is logged.
+My Login.js:
 export default function Login(props) {
   const { navigation } = props;
   const [error, setError] = useState({ email: "", password: "" }); // useState sirve para manejar el estado de un componente
@@ -23,14 +89,17 @@ export default function Login(props) {
       setError({ email: "", password: "" });
       signInWithEmailAndPassword(auth, email, password)
         .then(async (userCredential) => {
+          // Signed in
           const user = userCredential.user;
           try {
             await AsyncStorage.setItem("@session", JSON.stringify(user));
+            // send the user to the profile screen
             navigation.navigate("profileStack");
           } catch (error) {
             console.log(error);
           }
           setLoading(false);
+          navigation.navigate("profileStack");
         })
         .catch((error) => {
           setError({

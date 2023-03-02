@@ -3,6 +3,8 @@ import React from "react";
 import Navigation from "./config/navigation/Navigation";
 import { initializeApp } from "firebase/app";
 import { app } from "./config/utils/Firebase";
+import { LogBox } from "react-native";
+LogBox.ignoreAllLogs(true);
 
 export default function App() {
   return <Navigation />;

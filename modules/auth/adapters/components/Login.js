@@ -26,6 +26,7 @@ export default function Login(props) {
           const user = userCredential.user;
           try {
             await AsyncStorage.setItem("@session", JSON.stringify(user));
+            console.log("Usuario logueado -> " + JSON.stringify(user));
             navigation.navigate("profileStack");
           } catch (error) {
             console.log(error);
